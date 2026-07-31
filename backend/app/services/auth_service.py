@@ -1,13 +1,13 @@
 from datetime import datetime, timezone
 from fastapi import HTTPException, status
-from app.database.database import get_databse
+from app.database.database import get_database
 from app.schemas.user_schema import UserRegister, UserLogin
 from app.utils.security import hash_password, verify_password
 from app.utils.jwt_handler import create_access_token
 from app.models.user_model import user_model
 
 async def register_user(user_data: UserRegister):
-    db = get_databse()
+    db = get_database()
     existing_user = await db.users.find_one({"email": user_data.email})
     if existing_user:
         raise HTTPException(
@@ -33,7 +33,7 @@ async def register_user(user_data: UserRegister):
     return user_model(new_user)
 
 async def login_user(login_data: UserLogin):
-    db = get_databse()
+    db = get_database()
     user = await db.users.find_one({"email": login_data.email})
     if not user or not verify_password(login_data.password, user["password"]):
         raise HTTPException(
