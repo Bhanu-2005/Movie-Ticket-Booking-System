@@ -1,13 +1,11 @@
-from datetime import datetime
-
-def theatre_model(theatre: dict) -> dict:
+def theatre_model(theatre) -> dict:
     return {
-        "id": str(theatre["_id"]) if "_id" in theatre else None,
-        "name": theatre.get("name", ""),
-        "city": theatre.get("city", ""),
-        "address": theatre.get("address", ""),
-        "total_screens": theatre.get("total_screens", 1),
-        "is_active": theatre.get("is_active", True),
-        "created_at": theatre.get("created_at", datetime.now()),
-        "updated_at": theatre.get("updated_at", datetime.now()),
+        "id": str(theatre["_id"]),
+        "name": theatre["name"],
+        "city": theatre["city"],
+        "address": theatre["address"],
+        "total_screens": theatre["total_screens"],
+        "is_active": theatre["is_active"],
+        "created_at": theatre["created_at"],
+        "updated_at": theatre["updated_at"],
     }

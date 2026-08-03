@@ -1,46 +1,95 @@
-from fastapi import APIRouter, status, Depends, Query
-from typing import List, Optional
-from app.schemas.movie_schema import MovieCreate, MovieUpdate, MovieResponse
-from app.services.movie_service import (
-    create_movie,
+from fastapi import APIRouter, Depends, HTTPException, status
+
+from app.dependencies.auth_dependency import get_current_user
+from app.dependencies.admin_dependency import get_current_admin
+from app.services.movie_service import(
+    add_movie as svc_create_movie,
     get_all_movies,
-    get_movie_by_id,
+    get_movie as get_movie_by_id,
     update_movie,
     delete_movie
 )
-from app.dependencies.auth_dependency import get_current_user
 
-router = APIRouter(prefix="/movies", tags=["Movies"])
+from app.schemas.movie_schema import MovieCreate, MovieUpdate
 
-@router.get("", response_model=List[MovieResponse], status_code=status.HTTP_200_OK)
-async def list_movies(
-    search: Optional[str] = Query(None, description="Search movie by title"),
-    genre: Optional[str] = Query(None, description="Filter by genre")
-):
-    return await get_all_movies(search=search, genre=genre)
 
-@router.get("/{movie_id}", response_model=MovieResponse, status_code=status.HTTP_200_OK)
-async def get_movie(movie_id: str):
-    return await get_movie_by_id(movie_id)
+router = APIRouter(
+    prefix="/movies",
+    tags=["Movies"]
+)
 
-@router.post("", response_model=MovieResponse, status_code=status.HTTP_201_CREATED)
-async def add_movie(
+
+@router.post(
+    "/",
+    status_code = status.HTTP_201_CREATED
+)
+
+async def create_movie_route(
     movie: MovieCreate,
-    current_user=Depends(get_current_user)
+    current_user = Depends(get_current_user)
 ):
-    return await create_movie(movie)
+    created_movie = await svc_create_movie(movie)
+    return{
+        "success": True,
+        "message": "Movie added successfully.",
+        "data": created_movie
+    }
 
-@router.put("/{movie_id}", response_model=MovieResponse, status_code=status.HTTP_200_OK)
+
+
+@router.get("/")
+async def fetch_all_movies():
+    movies = await get_all_movies()
+
+    return{
+        "success": True,
+        "message": "Movies fetched successfully.",
+        "data": movies
+    }
+
+
+@router.get("/{movie_id}")
+async def fetch_movie(movie_id: str):
+
+    movie = await get_movie_by_id(movie_id)
+
+    return {
+        "success": True,
+        "message": "Movie fetched successfully.",
+        "data": movie
+    }
+
+
+
+@router.put("/{movie_id}")
 async def edit_movie(
     movie_id: str,
     movie: MovieUpdate,
     current_user=Depends(get_current_user)
 ):
-    return await update_movie(movie_id, movie)
 
-@router.delete("/{movie_id}", status_code=status.HTTP_200_OK)
+    updated_movie = await update_movie(
+        movie_id,
+        movie
+    )
+
+    return {
+        "success": True,
+        "message": "Movie updated successfully.",
+        "data": updated_movie
+    }
+
+
+
+@router.delete("/{movie_id}")
 async def remove_movie(
     movie_id: str,
     current_user=Depends(get_current_user)
 ):
-    return await delete_movie(movie_id)
+
+    await delete_movie(movie_id)
+
+    return {
+        "success": True,
+        "message": "Movie deleted successfully."
+    }

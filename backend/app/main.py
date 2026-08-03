@@ -4,6 +4,11 @@ from app.routes.auth_routes import router as auth_router
 from app.routes.movie_routes import router as movie_router
 from app.routes.theatre_routes import router as theatre_router
 from app.routes.screen_routes import router as screen_router
+from app.routes.show_routes import router as show_router
+from app.routes.booking_routes import router as booking_router
+from app.routes.payment_routes import router as payment_router
+from app.routes.dashboard_routes import router as dashboard_router
+
 
 app = FastAPI(
     title="Movie Ticket Booking API",
@@ -23,6 +28,11 @@ app.include_router(auth_router)
 app.include_router(movie_router)
 app.include_router(theatre_router)
 app.include_router(screen_router)
+app.include_router(show_router)
+app.include_router(booking_router)
+app.include_router(payment_router)
+app.include_router(dashboard_router)
+
 
 @app.get("/")
 async def root():

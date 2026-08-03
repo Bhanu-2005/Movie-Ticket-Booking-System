@@ -1,0 +1,15 @@
+async def fetch_user_bookings(current_user):
+
+    bookings = []
+
+    async for booking in db.bookings.find(
+        {
+            "user_id": ObjectId(current_user["_id"])
+        }
+    ):
+
+        bookings.append(
+            booking_model(booking)
+        )
+
+    return bookings
