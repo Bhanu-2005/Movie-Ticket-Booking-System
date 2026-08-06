@@ -26,6 +26,7 @@ async def add_movie(movie: MovieCreate):
         "duration": movie.duration,
         "release_date": movie.release_date,
         "description": movie.description,
+        "poster_url": movie.poster_url,
         "is_active": True,
         "created_at": datetime.now(timezone.utc),
         "updated_at": datetime.now(timezone.utc)
@@ -96,6 +97,7 @@ async def update_movie(
         "duration": movie.duration,
         "release_date": movie.release_date,
         "description": movie.description,
+        "poster_url": movie.poster_url,
         "updated_at": datetime.now(timezone.utc)
     }
 
@@ -138,3 +140,26 @@ async def delete_movie(movie_id: str):
     return {
         "message": "Movie deleted successfully."
     }
+
+
+from pymongo import ASCENDING
+
+async def search_movies(title: str):
+
+    movies = []
+
+    async for movie in db.movies.find(
+        {
+            "title": {
+                "$regex": title,
+                "$options": "i"
+            },
+            "is_active": True
+        }
+    ):
+
+        movies.append(
+            movie_model(movie)
+        )
+
+    return movies

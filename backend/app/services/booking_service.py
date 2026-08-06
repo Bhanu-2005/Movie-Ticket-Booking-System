@@ -84,3 +84,17 @@ async def create_booking(
 
     return booking_model(booking)
 
+
+async def fetch_user_bookings(current_user):
+    bookings_cursor = db.bookings.find({"user_id": ObjectId(current_user["_id"])})
+    bookings = []
+    async for b in bookings_cursor:
+        bookings.append(booking_model(b))
+    return bookings
+
+async def fetch_all_bookings():
+    bookings_cursor = db.bookings.find()
+    bookings = []
+    async for b in bookings_cursor:
+        bookings.append(booking_model(b))
+    return bookings

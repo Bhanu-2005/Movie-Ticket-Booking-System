@@ -35,6 +35,18 @@ async def dashboard_summary():
     async for booking in db.bookings.find():
 
         revenue += booking["total_amount"]
+    latest_bookings = []
+
+    async for booking in db.bookings.find().sort(
+        "created_at",
+        -1
+    ).limit(5):
+
+        latest_bookings.append(
+
+            booking_model(booking)
+
+        )
 
     return {
 
@@ -50,8 +62,8 @@ async def dashboard_summary():
 
         "total_bookings": total_bookings,
 
-        "total_revenue": revenue
+        "total_revenue": revenue,
+
+        "latest_bookings": latest_bookings
 
     }
-
-

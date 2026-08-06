@@ -40,6 +40,19 @@ async def add_theatre(theatre: TheatreCreate):
         {"_id": result.inserted_id}
     )
 
+    # Auto-generate screens for this theatre
+    screens_to_add = theatre.get("total_screens", 0)
+    for i in range(1, screens_to_add + 1):
+        new_screen = {
+            "theatre_id": str(result.inserted_id),
+            "name": f"Screen {i}",
+            "total_seats": 50,
+            "is_active": True,
+            "created_at": datetime.now(timezone.utc),
+            "updated_at": datetime.now(timezone.utc)
+        }
+        await db.screens.insert_one(new_screen)
+
     return theatre_model(theatre)
 
 

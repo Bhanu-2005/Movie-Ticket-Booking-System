@@ -35,6 +35,16 @@ else:
     print("Login failed, aborting further tests.")
     exit(1)
 
+# 2.a Get Profile (/auth/me)
+print("\n--- 2.a Get Profile (/auth/me) ---")
+res = requests.get(f"{BASE_URL}/auth/me", headers=headers)
+print(f"Status: {res.status_code}, Response: {res.text}")
+
+# 2.b Get Profile (/auth/profile)
+print("\n--- 2.b Get Profile (/auth/profile) ---")
+res = requests.get(f"{BASE_URL}/auth/profile", headers=headers)
+print(f"Status: {res.status_code}, Response: {res.text}")
+
 # 3. List Movies
 res = requests.get(f"{BASE_URL}/movies/", headers=headers)
 movies = res.json().get("data", [])

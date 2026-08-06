@@ -5,7 +5,8 @@ from app.schemas.show_schema import ShowCreate
 from app.services.show_service import (
     add_show,
     get_all_shows,
-    get_show
+    get_show,
+    get_available_seats
 )
 
 
@@ -54,3 +55,17 @@ async def fetch_show(show_id: str):
     }
 
 
+@router.get("/{show_id}/available-seats")
+async def available_seats(show_id: str):
+
+    seats = await get_available_seats(
+        show_id
+    )
+
+    return {
+
+        "success": True,
+
+        "data": seats
+
+    }

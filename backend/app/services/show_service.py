@@ -56,6 +56,21 @@ async def add_show(show: ShowCreate):
             detail="Screen not found."
         )
 
+    existing_show = await db.shows.find_one(
+        {
+            "screen_id": ObjectId(show.screen_id),
+            "show_date": show.show_date,
+            "show_time": show.show_time,
+            "is_active": True
+        }
+    )
+
+    if existing_show:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="A show already exists for this screen at the specified date and time."
+        )
+
     new_show = {
 
         "movie_id": ObjectId(show.movie_id),
@@ -126,3 +141,59 @@ async def get_show(show_id: str):
 
     return show_model(show)
 
+
+
+async def get_available_seats(show_id: str):
+
+    show = await db.shows.find_one(
+        {
+            "_id": ObjectId(show_id),
+            "is_active": True
+        }
+    )
+
+    if not show:
+
+        raise HTTPException(
+            status_code=404,
+            detail="Show not found."
+        )
+
+    booked = []
+
+    async for booking in db.bookings.find(
+        {
+            "show_id": ObjectId(show_id),
+            "booking_status": "CONFIRMED"
+        }
+    ):
+
+        booked.extend(
+            booking["seats"]
+        )
+
+    all_seats = []
+
+    rows = ["A", "B", "C", "D", "E"]
+
+    for row in rows:
+
+        for seat in range(1, 11):
+
+            all_seats.append(
+                f"{row}{seat}"
+            )
+
+    available = [
+        seat
+        for seat in all_seats
+        if seat not in booked
+    ]
+
+    return {
+
+        "available": available,
+
+        "booked": booked
+
+    }

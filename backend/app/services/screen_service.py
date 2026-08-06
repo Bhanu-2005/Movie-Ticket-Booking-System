@@ -34,6 +34,16 @@ async def get_all_screens():
         screens.append(screen_model(screen))
     return screens
 
+# Get Screens By Theatre
+async def get_screens_by_theatre(theatre_id: str):
+    if not ObjectId.is_valid(theatre_id):
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Invalid Theatre ID format.")
+        
+    screens = []
+    async for screen in db.screens.find({"theatre_id": theatre_id, "is_active": True}):
+        screens.append(screen_model(screen))
+    return screens
+
 # Get Screen By ID
 async def get_screen(screen_id: str):
     screen = await db.screens.find_one({"_id": ObjectId(screen_id), "is_active": True})

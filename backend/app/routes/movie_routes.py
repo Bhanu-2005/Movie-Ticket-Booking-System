@@ -7,7 +7,8 @@ from app.services.movie_service import(
     get_all_movies,
     get_movie as get_movie_by_id,
     update_movie,
-    delete_movie
+    delete_movie,
+    search_movies
 )
 
 from app.schemas.movie_schema import MovieCreate, MovieUpdate
@@ -92,4 +93,20 @@ async def remove_movie(
     return {
         "success": True,
         "message": "Movie deleted successfully."
+    }
+
+
+@router.get("/search")
+async def search_movie(title: str):
+
+    movies = await search_movies(title)
+
+    return {
+
+        "success": True,
+
+        "message": "Movies fetched successfully.",
+
+        "data": movies
+
     }

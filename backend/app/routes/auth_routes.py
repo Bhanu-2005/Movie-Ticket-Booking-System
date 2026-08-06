@@ -27,3 +27,17 @@ async def get_profile(
         "message": "Profile fetched successfully.",
         "data": user_model(current_user)
     }
+
+
+@router.get("/profile")
+async def profile(
+    current_user=Depends(get_current_user)
+):
+
+    return {
+
+        "success": True,
+
+        "data": user_model(current_user)
+
+    }
