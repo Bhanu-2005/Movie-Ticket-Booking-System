@@ -3,16 +3,15 @@ import { Link } from 'react-router-dom';
 import { FiPlayCircle, FiInfo } from 'react-icons/fi';
 
 const Hero = ({ featuredMovie }) => {
-  if (!featuredMovie) return null;
-
+  const movie = featuredMovie || {};
+  
   return (
     <div className="relative w-full h-[70vh] md:h-[80vh]">
       {/* Background Image with Gradient Overlay */}
       <div className="absolute inset-0 w-full h-full">
         <img 
-          src={featuredMovie.poster_url || "/images/hero_bg.png"} 
-          onError={(e) => { e.target.onerror = null; e.target.src = "/images/hero_bg.png"; }}
-          alt={featuredMovie.title} 
+          src="/images/hero_bg.png"
+          alt={movie.title || "Movie Background"} 
           className="w-full h-full object-cover object-top"
         />
         <div className="absolute inset-0 bg-gradient-to-t from-[#0F172A]/90 via-[#0F172A]/30 to-transparent"></div>
@@ -26,29 +25,29 @@ const Hero = ({ featuredMovie }) => {
             <span className="px-3 py-1 bg-[#DC2626] text-white text-xs font-bold rounded-sm uppercase tracking-wider">
               Featured
             </span>
-            <span className="text-gray-300 text-sm font-medium">{featuredMovie.genre}</span>
+            <span className="text-gray-300 text-sm font-medium">{movie.genre || "Action / Drama"}</span>
             <span className="text-gray-400 text-sm">•</span>
-            <span className="text-gray-300 text-sm font-medium">{featuredMovie.duration} mins</span>
+            <span className="text-gray-300 text-sm font-medium">{movie.duration || "120"} mins</span>
           </div>
           
           <h1 className="text-5xl md:text-7xl font-extrabold text-white tracking-tight leading-tight">
-            {featuredMovie.title}
+            {movie.title || "Welcome to CineMax"}
           </h1>
           
           <p className="text-lg text-gray-300 line-clamp-3">
-            {featuredMovie.description}
+            {movie.description || "Book tickets for your favorite movies online. Get the best seats and enjoy the show!"}
           </p>
           
           <div className="flex flex-wrap items-center gap-4 pt-4">
             <Link 
-              to={`/movies/${featuredMovie.id}`} 
+              to={movie.id ? `/movies/${movie.id}` : "/movies"} 
               className="flex items-center justify-center px-8 py-3 bg-[#DC2626] hover:bg-red-700 text-white font-semibold rounded-md transition-all duration-200 shadow-[0_0_20px_rgba(220,38,38,0.4)] hover:scale-105"
             >
               <FiPlayCircle className="mr-2" size={20} />
               Book Tickets
             </Link>
             <Link 
-              to={`/movies/${featuredMovie.id}`} 
+              to={movie.id ? `/movies/${movie.id}` : "/movies"} 
               className="flex items-center justify-center px-8 py-3 bg-gray-800/80 hover:bg-gray-700 text-white font-semibold rounded-md backdrop-blur-sm border border-gray-700 transition-all duration-200 hover:scale-105"
             >
               <FiInfo className="mr-2" size={20} />
